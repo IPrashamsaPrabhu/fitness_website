@@ -6,20 +6,20 @@ import Input from '@mui/joy/Input';
 import Select from '@mui/joy/Select';
 import Option from '@mui/joy/Option';
 import { AiFillDelete, AiOutlineClose } from 'react-icons/ai'
-/*import dayjs from 'dayjs';
+import dayjs from 'dayjs';
 
-//
+
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { StaticDatePicker } from '@mui/x-date-pickers/StaticDatePicker';
 import { DesktopDatePicker } from '@mui/x-date-pickers';
-import { ToastContainer, toast } from 'react-toastify';*/
+import { ToastContainer, toast } from 'react-toastify';
 
 interface AuthPopupProps {
     setShowpopup: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-
+//create an interface to handle signup form
 interface SignupFormData {
     name: String | null,
     email: String | null,
@@ -139,12 +139,12 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ setShowpopup }) => {
                 console.log(data)
 
                 if (data.ok) {
-                   /* toast.success(data.message)*/
+                    toast.success(data.message)
 
                     setShowpopup(false)
                 }
                 else {
-                    /*toast.error(data.message)*/
+                    toast.error(data.message)
                 }
             }).catch(err => {
                 console.log(err)
@@ -166,12 +166,12 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ setShowpopup }) => {
                 console.log(data)
 
                 if (data.ok) {
-                   /* toast.success(data.message)*/
+                    toast.success(data.message)
 
                     setShowSignup(false)
                 }
                 else {
-                    /*toast.error(data.message)*/
+                    toast.error(data.message)
                 }
             }).catch(err => {
                 console.log(err)
@@ -325,7 +325,22 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ setShowpopup }) => {
 
 
                                 <label htmlFor="">Date of Birth</label>
-                               
+                                <LocalizationProvider dateAdapter={AdapterDayjs}
+
+                                >
+                                    <DesktopDatePicker defaultValue={dayjs(new Date())}
+                                        sx={{
+                                            backgroundColor: 'white',
+                                        }}
+
+                                        onChange={(newValue) => {
+                                            setSignupFormData({
+                                                ...signupformData,
+                                                dob: new Date(newValue as any)
+                                            })
+                                        }}
+                                    />
+                                </LocalizationProvider>
 
                                 <button
                                     onClick={(e) => {

@@ -52,7 +52,7 @@ router.post('/getweightbydate', authTokenHandler, async (req, res) => {
 
 // has a bug
 router.post('/getweightbylimit', authTokenHandler, async (req, res) => {
-    const { limit } = req.body;
+    const { limit = 90 } = req.body;
 
     const userId = req.userId;
     const user = await User.findById({ _id: userId });

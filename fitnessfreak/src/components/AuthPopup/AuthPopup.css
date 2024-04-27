@@ -20,6 +20,7 @@
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.354);
     height: 70%;
 }
+
 .authform .left{
     width: 50%;
     /* height: 100%; */
@@ -61,10 +62,12 @@
 .authform p{
     margin: 10px 0px;
 }
+
 .authform .form_input_leftright{
     display: flex;
     gap: 10px;
 }
+
 .authform .right form input{
     /* background-color: aqua; */
 }

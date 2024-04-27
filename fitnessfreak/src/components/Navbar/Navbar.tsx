@@ -10,7 +10,7 @@ const Navbar = () => {
     const [isloggedin, setIsloggedin] = React.useState<boolean>(false)
 
     const [showpopup, setShowpopup] = React.useState<boolean>(false)
-    const checklogin = async () => {
+    const checklogin = async () => {   //calls checklogin api  of auth.js file created in the backend 
         fetch(process.env.NEXT_PUBLIC_BACKEND_API + '/auth/checklogin', {
             method: 'POST',
             credentials: 'include',
@@ -55,7 +55,7 @@ const Navbar = () => {
 
             }
 
-            {         
+            {
                 showpopup && <AuthPopup setShowpopup={setShowpopup} />
             }
         </nav>

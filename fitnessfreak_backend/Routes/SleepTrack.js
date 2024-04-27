@@ -16,7 +16,7 @@ function createResponse(ok, message, data) {
 router.post('/addsleepentry', authTokenHandler, async (req, res) => {
     const { date, durationInHrs } = req.body;
 
-    if (!date || !duration) {
+    if (!date || !durationInHrs) {
         return res.status(400).json(createResponse(false, 'Please provide date and sleep duration'));
     }
 
@@ -52,7 +52,7 @@ router.post('/getsleepbydate', authTokenHandler, async (req, res) => {
 
 // has a bug
 router.post('/getsleepbylimit', authTokenHandler, async (req, res) => {
-    const { limit } = req.body;
+    const { limit = 10 } = req.body;
 
     const userId = req.userId;
     const user = await User.findById({ _id: userId });
@@ -98,7 +98,7 @@ router.get('/getusersleep', authTokenHandler, async (req, res) => {
     const userId = req.userId;
     const user = await User.findById({ _id: userId });
 
-    const goalSleep = 7;
+    const goalSleep = 6;
 
     res.json(createResponse(true, 'User max sleep information', {goalSleep }));
 });

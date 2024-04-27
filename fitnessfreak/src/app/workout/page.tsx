@@ -1,9 +1,10 @@
 "use client"
 import React from 'react'
-
+import './workoutPage.css'
 const page = () => {
     const [workout, setWorkout] = React.useState<any>(null)
-    
+
+
     const getworkout = async () => {
         let data: any = {
             type: 'Chest',
@@ -38,14 +39,15 @@ const page = () => {
                 }
             ]
         }
+
         setWorkout(data)
     }
+
     React.useEffect(() => {
         getworkout()
     }, [])
-
-  return (
-    <div className='workout'>
+    return (
+        <div className='workout'>
             <h1 className='mainhead1'> {workout?.type} Day</h1>
             <div className='workout__exercises'>
                 {
@@ -68,9 +70,8 @@ const page = () => {
                     })
                 }
             </div>
-
-    </div>
-  )
+        </div>
+    )
 }
 
 export default page

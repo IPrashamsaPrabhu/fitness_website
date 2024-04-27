@@ -1,7 +1,7 @@
 import React from 'react'
 import CircularProgress from '@mui/joy/CircularProgress';
 import { AiOutlineEye } from 'react-icons/ai'
-import './HomeBanner1.css'
+import './HomeBanner1.css';
 
 const HomeBanner1 = () => {
 
@@ -55,13 +55,32 @@ const HomeBanner1 = () => {
     ]
     setData(temp)
     console.log(temp)
+    
+    /*fetch(process.env.NEXT_PUBLIC_BACKEND_API + '/report/getreport',{
+      method:'GET',
+      credentials:'include'
+    })
+    .then(res=>res.json())
+    .then(data=>{
+      console.log(data)
+      if(data.ok){
+        setData(data.data)
+      }
+      else{
+        setData([])
+      }
+    })
+    .catch(err=>{
+      console.log(err)
+      setData([])
+    })*/
   }
 
   React.useEffect(() => {
     getData()
   }, [])
 
-  function simplifyFraction(numerator: number, denominator: number): [number, number] {
+ /* function simplifyFraction(numerator: number, denominator: number): [number, number] {
     function gcd(a: number, b: number): number {
       return b === 0 ? a : gcd(b, a % b);
     }
@@ -73,7 +92,7 @@ const HomeBanner1 = () => {
 
     return [simplifiedNumerator, simplifiedDenominator];
 
-  }
+  }*/
   return (
     <div className='meters'>
 
@@ -84,11 +103,11 @@ const HomeBanner1 = () => {
               <div className='card-header'>
                 <div className='card-header-box'>
                   <div className='card-header-box-name'>{item.name}</div>
-                  <div className='card-header-box-value'>{item.value} {item.unit}</div>
+                  <div className='card-header-box-value'>{parseInt(item.value)} {item.unit}</div>
                 </div>
                 <div className='card-header-box'>
                   <div className='card-header-box-name'>Target</div>
-                  <div className='card-header-box-value'>{item.goal} {item.goalUnit}</div>
+                  <div className='card-header-box-value'>{parseInt(item.goal)} {item.goalUnit}</div>
                 </div>
               </div>
 
@@ -101,16 +120,23 @@ const HomeBanner1 = () => {
                   (item.value / item.goal) * 100
                 }
               >
-                <span className='textincircle'>
-                  {
-                    simplifyFraction(item.value, item.goal)[0] + ' / ' + simplifyFraction(item.value, item.goal)[1]
-                  }
-                </span>
+                <div className='textincircle'>
+                    <span>{
+                      parseInt(item.value)
+                      }
+                    </span> 
+                    <span className="hrline"></span>     
+                    <span>{
+                      parseInt(item.goal)
+                      }
+
+                  </span>           
+                </div>
               </CircularProgress>
 
               <button
                onClick={() => {
-                window.location.href = `/report/${item.name}`
+                window.location.href = `/report/${item.name}`;
               }}
               >Show Report <AiOutlineEye /></button>
 

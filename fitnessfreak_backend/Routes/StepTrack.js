@@ -52,7 +52,7 @@ router.post('/getstepsbydate', authTokenHandler, async (req, res) => {
 
 
 router.post('/getstepsbylimit', authTokenHandler, async (req, res) => {
-    const { limit } = req.body;
+    const { limit = 90 } = req.body;
 
     const userId = req.userId;
     const user = await User.findById({ _id: userId });

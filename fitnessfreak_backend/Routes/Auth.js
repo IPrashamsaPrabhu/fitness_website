@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
         user: 'iprashamsaprabhu@gmail.com',  //comapny email to send otp to the registered user
-        pass: 'ardosnjuokezdpwp' //change the app password to ur app password
+        pass: 'yhdx vqvy dctt tahi' //change the app password to ur app password
     }
 })
 

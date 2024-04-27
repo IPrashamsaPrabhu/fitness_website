@@ -54,7 +54,7 @@ router.post('/getwaterbydate', authTokenHandler, async (req, res) => {
 
 // has a bug
 router.post('/getwaterbylimit', authTokenHandler, async (req, res) => {
-    const { limit } = req.body;
+    const { limit = 90 } = req.body;
 
     const userId = req.userId;
     const user = await User.findById({ _id: userId });
