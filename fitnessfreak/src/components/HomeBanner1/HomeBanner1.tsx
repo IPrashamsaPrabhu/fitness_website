@@ -136,7 +136,7 @@ const HomeBanner1 = () => {
 
               <button
                onClick={() => {
-                window.location.href = `/report/${item.name}`;
+                window.location.href = `/report/calorie`;
               }}
               >Show Report <AiOutlineEye /></button>
 

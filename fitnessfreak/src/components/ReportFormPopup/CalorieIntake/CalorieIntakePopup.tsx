@@ -10,6 +10,8 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import {DatePicker} from '@mui/x-date-pickers/DatePicker';
 import {toast} from 'react-toastify';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+
+
 interface CaloriIntakePopupProps {
   setShowCalorieIntakePopup: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -17,8 +19,8 @@ interface CaloriIntakePopupProps {
 const CalorieIntakePopup: React.FC<CaloriIntakePopupProps> = ({ setShowCalorieIntakePopup }) => {
   const color = '#ffc20e'
 
-  const [date, setDate] = React.useState<any>(new Date())
-  const [time, setTime] = React.useState<any>(new Date())
+  const [date, setDate] = React.useState<Dayjs>(dayjs());
+  const [time, setTime] = React.useState<Dayjs>(dayjs());
 
   const [calorieIntake,setCalorieIntake]=React.useState<any>({
     item:'',
@@ -26,112 +28,123 @@ const CalorieIntakePopup: React.FC<CaloriIntakePopupProps> = ({ setShowCalorieIn
     quantity:'',
     quantitytype:'g'
   })
-   const[items,setItems]=React.useState<any>({})
-  /*const selectedDay = (val: any) => {
-    console.log(val)
+  const [items, setItems] = React.useState<any>([]);
+
+  const selectedDay = (val: Dayjs | string | Date) => {
+    const selectedDate = dayjs(val); // Convert to Dayjs object
+    setDate(selectedDate); // Update date state
+    setCalorieIntake({ ...calorieIntake, date: selectedDate.format('YYYY-MM-DD') }); // Update calorieIntake with the selected date
   };
-  const [value, setValue] = React.useState<Dayjs | null>(dayjs('2022-04-17T15:30'));*/
 
-  const saveCalorieIntake=async()=>{
-    let tempdate=date.format('YYYY-MM-DD')
-    let temptime=time.format('HH:mm:ss')
-    let tempdatetime=tempdate+''+ temptime
-    let finaldatetime=new Date(tempdatetime)
-    console.log(finaldatetime+'finaldatetime')
+  console.log(calorieIntake.date);
+  
+  const saveCalorieIntake = async () => {
+    try {
+      console.log('Calorie Intake Data:', calorieIntake);
+  
+       // Basic validation (optional)
+    /*if (!calorieIntake.item || !calorieIntake.quantity || !calorieIntake.quantitytype || !calorieIntake.date) {
+      toast.error('Please fill in all required fields');
+      return;
+    }*/
 
-    fetch(process.env.NEXT_PUBLIC_BACKEND_API+ '/calorieintake/addcalorieintake',{
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-      },
-      credentials:'include',
-      body: JSON.stringify({
-        item:calorieIntake.item,
-        date:finaldatetime,
-        quantity:calorieIntake.quantity,
-        quantitytype:calorieIntake.quantitytype
-      })
-  })
-  .then(res=>res.json())
-  .then(data=>{
-    if(data.ok){
-      toast.success('Calorie intake added successfully')
-      getCalorieIntake
+    setCalorieIntake({ ...calorieIntake, date: date.format('YYYY-MM-DD') }); // Update state before API call
+
+      const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_API + '/CalorieIntake/addcalorieintake', {
+        
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Include cookies for authentication (if needed)
+        body: JSON.stringify({
+          item: calorieIntake.item,
+          date:  calorieIntake.date,
+          quantity: parseFloat(calorieIntake.quantity),
+          quantityType: calorieIntake.quantitytype,
+        }),
+      });
+  
+      const data = await response.json();
+  
+      if (data.ok) {
+        toast.success('Calorie intake added successfully');
+        getCalorieIntake(); // Refresh the list after successful addition
+      } else {
+        toast.error('Error in adding calorie intake');
+        console.error(data.error); // Log the specific error from the API
+      }
+    } catch (err) {
+      toast.error('Error in adding calorie intake');
+      console.error(err); // Log the error for debugging
     }
-    else{
-      toast.error('Error in adding calorie intake')
-    }
-  })
-  .catch(err => {
-    toast.error('Error in adding calorie intake')
-    console.log(err)
-  })
-  }
-  const getCalorieIntake=async()=>{
-    setItems([])
-    fetch(process.env.NEXT_PUBLIC_BACKEND_API + '/calorieintake/getcalorieintakebydate',{
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-      },
-      credentials:'include',
-      body:JSON.stringify({
-        date:date
-      }) 
-    })
-    .then(res=>res.json())
-    .then(data=>{
-      if(data.ok){
-        console.log(data.data)
-        setItems(data.data)
-      }
-      else{
-        toast.error('error in getting calorie intake')
-      }
-    })
-    .catch(err=>{
-      toast.error('Error in getting calorie intake')
-      console.log(err)
-    })
-  }
-  const deleteCalorieIntake=async(item: any)=>{
-    fetch(process.env.NEXT_PUBLIC_BACKEND_API +'/calorieintake/deletecalorieintake',{
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-      },
-      credentials:'include',
-      body:JSON.stringify({
-        item: items.item,
-        date: items.date
-      })
-    })
-    .then(res=>res.json())
-    .then(data=>{
-      if(data.ok){
-        toast.success('calorie intake item deleted successfully')
-        getCalorieIntake()
-      }
-      else{
-        toast.error('error in deleting calorie intake')
-      }
-    })
-    .catch(err=>{
-      toast.error('Error in deleting calorie intake')
-      console.log(err)
-    })
+  };
+   
+  
+  const getCalorieIntake = async () => {
+    setItems([]); // Clear previous items before fetching
 
-  }
+    try {
+      const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_API + '/CalorieIntake/getcalorieintakebydate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Include cookies for authentication (if needed)
+        body: JSON.stringify({
+        date: date.format('YYYY-MM-DD'), // Use Day.js for formatting date
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.ok) {
+        setItems(data.data); // Set the fetched calorie intake data
+      } else {
+        toast.error('Error in getting calorie intake');
+      }
+    } catch (err) {
+      toast.error('Error in getting calorie intake');
+      console.error(err); // Log the error for debugging
+    }
+  };
+
+
+  const deleteCalorieIntake = async (item: any) => {
+    try {
+      const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_API + '/CalorieIntake/deletecalorieintake', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Include cookies for authentication (if needed)
+        body: JSON.stringify({
+          item: item.item, // Assuming item object has an 'item' property
+          // Include date if your API requires it for deletion (e.g., item.date)
+        }),
+      });
+  
+      const data = await response.json();
+  
+      if (data.ok) {
+        toast.success('Calorie intake item deleted successfully');
+        getCalorieIntake(); // Refresh the list after successful deletion
+      } else {
+        toast.error('Error in deleting calorie intake');
+        console.error(data.error); // Log the specific error from the API
+      }
+    } catch (err) {
+      toast.error('Error in deleting calorie intake');
+      console.error(err); // Log the error for debugging
+    }
+  };
+  
 
   //when there is change of date
   React.useEffect(()=>{
     getCalorieIntake()
   },[date])
-
-  const selectedDay=(val:any)=>{
-    setDate(val)
-  };
-
+  
   return (
     <div className='popupout'>
       <div className="popupbox"> 
@@ -140,9 +153,16 @@ const CalorieIntakePopup: React.FC<CaloriIntakePopupProps> = ({ setShowCalorieIn
           setShowCalorieIntakePopup(false)
         }}
         >
-          <AiOutlineClose/>
-          </button>
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <AiOutlineClose/>
+        </button>
+
+    <TextField id="outlined-basic" label="Food item name" variant="outlined" color="warning"
+    onChange={(e)=>{
+      setCalorieIntake({ ...calorieIntake,item:e.target.value})
+    }}
+    />
+    
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DatePicker
       label="Select Date"
       value={date}
@@ -151,49 +171,27 @@ const CalorieIntakePopup: React.FC<CaloriIntakePopupProps> = ({ setShowCalorieIn
       }}
       />
     </LocalizationProvider>
-    <TextField id="outlined-basic" label="Food item name" variant="outlined" color="warning"
-    onChange={(e)=>{
-      setCalorieIntake({ ...calorieIntake,item:e.target.value})
-    }}
-    />
+    
+   
     <TextField id="outlined-basic" label="Food item amount(in gms)" variant="outlined" color="warning" type='number'
     onChange={(e)=>{
       setCalorieIntake({ ...calorieIntake,quantity:e.target.value})
     }}
     />
-    <div className='timebox'>
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <TimePicker
-          label="Controlled picker"
-          value={time}
-          onChange={(newValue:any) => setTime(newValue)}
-        />
-      </LocalizationProvider>
 
-    </div>
+<TextField id="outlined-basic" label="Food item quantity type" variant="outlined" color="warning"
+    onChange={(e)=>{
+      setCalorieIntake({ ...calorieIntake,quantitytype:e.target.value})
+    }}
+    />
+
     <Button variant="contained" color="warning"
     onClick={saveCalorieIntake}
     >
       Save
     </Button>
     
-    <div className="hrline"></div>
-    <div className="items">
-      {
-        items.map((item:any)=>{
-          return(
-            <div className="item">
-              <h3>{item.item}</h3>
-               <h3>{item.quantity}{item.quantitytype}</h3>
-               <button onClick={() => deleteCalorieIntake(item)}>
-                <AiFillDelete/></button>
-            </div>
-          )
-        })
-      }
-    </div>
     
-
       
       </div>
       </div>
@@ -202,3 +200,4 @@ const CalorieIntakePopup: React.FC<CaloriIntakePopupProps> = ({ setShowCalorieIn
 }
 
 export default CalorieIntakePopup;
+

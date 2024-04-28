@@ -21,7 +21,7 @@ const page = () => {
     const getDataForS1 = async () => { 
         // to get the data from the backend 
         
-        if(pathname=='/report/Calorie%20Intake'){
+        if(pathname=='/report/calorie'){
             fetch(process.env.NEXT_PUBLIC_BACKEND_API + '/calorieintake/getcalorieintakebylimit',{
                 method:'POST',
                 headers:{
@@ -159,33 +159,32 @@ const page = () => {
     return (
         <div className='reportpage'>
             
-             
-                    <div className='s1'>
-                    <LineChart
-                        xAxis={[{
-                            id: 'Day',
-                            data: dataS1.xAxis.data,
-                            scaleType: dataS1.xAxis.scaleType,
-                            label: dataS1.xAxis.label,
-                            valueFormatter: (date: any) => {
-                                return date.getDate();
-                            }
-                        }]}
-                        series={[
-                            {
-                                data: dataS1.data,
-                                label: dataS1.title,
-                                color: dataS1.color,
-                            },
-                        ]}
-                        {...chartsParams}
-                    />
-                    </div>
-            
-            
-            <button className='editbutton'
+            <div className='s1'>
+  {dataS1 && dataS1.xAxis && (  // Add conditional check
+    <LineChart
+      xAxis={[{
+        id: 'Day',
+        data: dataS1.xAxis.data,
+        scaleType: dataS1.xAxis.scaleType,
+        label: dataS1.xAxis.label,
+        valueFormatter: (date: any) => {
+          return date.getDate();
+        }
+      }]}
+      series={[
+        {
+          data: dataS1.data,
+          label: dataS1.title,
+          color: dataS1.color,
+        },
+      ]}
+      {...chartsParams}
+    />
+  )}
+</div>
+              <button className='editbutton'
                 onClick={() => {
-                    if(pathname=='/report/Calories%20Intake'){
+                    if(pathname=='/report/calorie'){
                         setShowCalorieIntakePopup(true)
                     }
                    else{
